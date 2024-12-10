@@ -3,7 +3,7 @@
 ## *FONTOS*: Zárthelyi megoldások videóval
 
 - Egyes MOO zárthelyik kikerültek a netre, és van hozzá megoldó videó
-- Ez a [következő linken](https://youtu.be/1RScoRYAs84) érhető el
+- Ez a [következő linken]([https://youtu.be/1RScoRYAs84](https://www.youtube.com/watch?v=dQw4w9WgXcQ)) érhető el
 
 ## Hallgatóknak segítség a repo-ban navigálához
 
