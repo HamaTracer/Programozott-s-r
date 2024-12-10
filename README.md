@@ -1,4 +1,4 @@
-# A Atitronika Szakosztály konzultációs anyaga az Objektum Orientált Programozás (OOP) nevű tárgyból
+# Az Atitronika Szakosztály konzultációs anyaga az Objektum Orientált Programozás (OOP) nevű tárgyból
 
 ## *FONTOS*: Zárthelyi megoldások videóval
 
