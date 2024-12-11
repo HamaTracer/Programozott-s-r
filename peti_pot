@@ -1,0 +1,118 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+
+// Nem tökeletes a kod, hatha Vanda tud segíteni, dolgozik én is meg rajta
+struct Cocktail {
+    string name;
+    string alcoholic;
+    string category;
+    string glassType;
+};
+
+int main() {
+    const string fileName = "Cocktails.csv";
+    const string outputFileName = "CoffeeTeaDrinks.csv";
+
+    ifstream inputFile(fileName);
+    if (!inputFile.is_open()) {
+        cerr << "Nem sikerült megnyitni a(z) " << fileName << " fájlt." << endl;
+        return 1;
+    }
+
+    ofstream outputFile(outputFileName);
+    if (!outputFile.is_open()) {
+        cerr << "Nem sikerült megnyitni a(z) " << outputFileName << " fájlt." << endl;
+        return 1;
+    }
+
+    string header;
+    getline(inputFile, header); // Fejléc beolvasása
+    outputFile << header << endl; // Fejléc írása a kimeneti fájlba
+
+    // Dinamikus tömb a Coffee / Tea kategóriájú italokhoz
+    Cocktail* coffeeTeaDrinks = new Cocktail[500]; // Maximum 500 ital
+    int coffeeTeaCount = 0;
+
+    string line;
+    while (getline(inputFile, line)) {
+        if (line.empty()) continue; // Üres sorok átugrása
+
+        stringstream ss(line);
+        string name, alcoholic, category, glassType;
+
+        getline(ss, name, ';');
+        getline(ss, alcoholic, ';');
+        getline(ss, category, ';');
+        getline(ss, glassType, ';');
+
+        // Trim szóközök eltávolítása a kategória ellenőrzéséhez
+        category.erase(category.find_last_not_of(" \t\n\r") + 1);
+        category.erase(0, category.find_first_not_of(" \t\n\r"));
+
+        if (category == "Coffee / Tea") {
+            coffeeTeaDrinks[coffeeTeaCount++] = { name, alcoholic, category, glassType };
+        }
+    }
+
+    inputFile.close();
+
+    // Coffee / Tea kategóriájú italok rendezése ABC sorrendbe
+    sort(coffeeTeaDrinks, coffeeTeaDrinks + coffeeTeaCount, [](const Cocktail& a, const Cocktail& b) {
+        return a.name < b.name;
+        });
+
+    // Alkoholmentes italok számlálása és pohár típus szerinti számlálás
+    int nonAlcoholicCount = 0;
+    int coffeeMugCount = 0;
+    int champagneFluteCount = 0;
+
+    for (int i = 0; i < coffeeTeaCount; ++i) {
+        if (coffeeTeaDrinks[i].alcoholic == "Non alcoholic") {
+            nonAlcoholicCount++;
+        }
+        if (coffeeTeaDrinks[i].glassType == "Coffee mug") {
+            coffeeMugCount++;
+        }
+        else if (coffeeTeaDrinks[i].glassType == "Champagne flute") {
+            champagneFluteCount++;
+        }
+    }
+
+    // Kiírás konzolra
+    cout << "Coffee / Tea kategóriájú italok ABC sorrendben:" << endl;
+    if (coffeeTeaCount == 0) {
+        cout << "Nincs ilyen kategóriájú ital." << endl;
+    }
+    else {
+        for (int i = 0; i < coffeeTeaCount; ++i) {
+            cout << "Név: " << coffeeTeaDrinks[i].name
+                << ", Alkoholos: " << coffeeTeaDrinks[i].alcoholic
+                << ", Kategória: " << coffeeTeaDrinks[i].category
+                << ", Pohártípus: " << coffeeTeaDrinks[i].glassType << endl;
+
+            // Kiírás fájlba
+            outputFile << coffeeTeaDrinks[i].name << ";"
+                << coffeeTeaDrinks[i].alcoholic << ";"
+                << coffeeTeaDrinks[i].category << ";"
+                << coffeeTeaDrinks[i].glassType << endl;
+        }
+        cout << "\nAlkoholmentes italok száma: " << nonAlcoholicCount << endl;
+        cout << "Coffee mug típusú poharak száma: " << coffeeMugCount << endl;
+        cout << "Champagne flute típusú poharak száma: " << champagneFluteCount << endl;
+    }
+
+    outputFile << "\nAlkoholmentes italok száma: " << nonAlcoholicCount << endl;
+    outputFile << "Coffee mug típusú poharak száma: " << coffeeMugCount << endl;
+    outputFile << "Champagne flute típusú poharak száma: " << champagneFluteCount << endl;
+
+    outputFile.close();
+    delete[] coffeeTeaDrinks; // Dinamikus tömb felszabadítása
+
+    return 0;
+}
